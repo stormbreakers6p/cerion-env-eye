@@ -16,6 +16,8 @@ import { Route as AppDashboardRouteImport } from './routes/_app.dashboard'
 import { Route as AppDevicesRouteImport } from './routes/_app.devices'
 import { Route as AppEnergyRouteImport } from './routes/_app.energy'
 import { Route as AppEnvironmentRouteImport } from './routes/_app.environment'
+import { Route as AppHistoryRouteImport } from './routes/_app.history'
+import { Route as AppReportsRouteImport } from './routes/_app.reports'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -51,6 +53,16 @@ const AppEnvironmentRoute = AppEnvironmentRouteImport.update({
   path: '/environment',
   getParentRoute: () => AppRoute,
 } as any)
+const AppHistoryRoute = AppHistoryRouteImport.update({
+  id: '/history',
+  path: '/history',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppReportsRoute = AppReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -59,6 +71,8 @@ export interface FileRoutesByFullPath {
   '/devices': typeof AppDevicesRoute
   '/energy': typeof AppEnergyRoute
   '/environment': typeof AppEnvironmentRoute
+  '/history': typeof AppHistoryRoute
+  '/reports': typeof AppReportsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -67,6 +81,8 @@ export interface FileRoutesByTo {
   '/devices': typeof AppDevicesRoute
   '/energy': typeof AppEnergyRoute
   '/environment': typeof AppEnvironmentRoute
+  '/history': typeof AppHistoryRoute
+  '/reports': typeof AppReportsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -77,13 +93,30 @@ export interface FileRoutesById {
   '/_app/devices': typeof AppDevicesRoute
   '/_app/energy': typeof AppEnergyRoute
   '/_app/environment': typeof AppEnvironmentRoute
+  '/_app/history': typeof AppHistoryRoute
+  '/_app/reports': typeof AppReportsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/alerts' | '/dashboard' | '/devices' | '/energy' | '/environment'
+    | '/'
+    | '/alerts'
+    | '/dashboard'
+    | '/devices'
+    | '/energy'
+    | '/environment'
+    | '/history'
+    | '/reports'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/alerts' | '/dashboard' | '/devices' | '/energy' | '/environment'
+  to:
+    | '/'
+    | '/alerts'
+    | '/dashboard'
+    | '/devices'
+    | '/energy'
+    | '/environment'
+    | '/history'
+    | '/reports'
   id:
     | '__root__'
     | '/'
@@ -93,6 +126,8 @@ export interface FileRouteTypes {
     | '/_app/devices'
     | '/_app/energy'
     | '/_app/environment'
+    | '/_app/history'
+    | '/_app/reports'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -151,6 +186,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppEnvironmentRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/history': {
+      id: '/_app/history'
+      path: '/history'
+      fullPath: '/history'
+      preLoaderRoute: typeof AppHistoryRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/reports': {
+      id: '/_app/reports'
+      path: '/reports'
+      fullPath: '/reports'
+      preLoaderRoute: typeof AppReportsRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
@@ -160,6 +209,8 @@ interface AppRouteChildren {
   AppDevicesRoute: typeof AppDevicesRoute
   AppEnergyRoute: typeof AppEnergyRoute
   AppEnvironmentRoute: typeof AppEnvironmentRoute
+  AppHistoryRoute: typeof AppHistoryRoute
+  AppReportsRoute: typeof AppReportsRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
@@ -168,6 +219,8 @@ const AppRouteChildren: AppRouteChildren = {
   AppDevicesRoute: AppDevicesRoute,
   AppEnergyRoute: AppEnergyRoute,
   AppEnvironmentRoute: AppEnvironmentRoute,
+  AppHistoryRoute: AppHistoryRoute,
+  AppReportsRoute: AppReportsRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
