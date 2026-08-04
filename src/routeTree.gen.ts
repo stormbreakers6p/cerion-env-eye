@@ -12,6 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppDashboardRouteImport } from './routes/_app.dashboard'
+import { Route as AppEnergyRouteImport } from './routes/_app.energy'
+import { Route as AppEnvironmentRouteImport } from './routes/_app.environment'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -27,27 +29,49 @@ const AppDashboardRoute = AppDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AppRoute,
 } as any)
+const AppEnergyRoute = AppEnergyRouteImport.update({
+  id: '/energy',
+  path: '/energy',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppEnvironmentRoute = AppEnvironmentRouteImport.update({
+  id: '/environment',
+  path: '/environment',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof AppDashboardRoute
+  '/energy': typeof AppEnergyRoute
+  '/environment': typeof AppEnvironmentRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof AppDashboardRoute
+  '/energy': typeof AppEnergyRoute
+  '/environment': typeof AppEnvironmentRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
   '/_app/dashboard': typeof AppDashboardRoute
+  '/_app/energy': typeof AppEnergyRoute
+  '/_app/environment': typeof AppEnvironmentRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard'
+  fullPaths: '/' | '/dashboard' | '/energy' | '/environment'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard'
-  id: '__root__' | '/' | '/_app' | '/_app/dashboard'
+  to: '/' | '/dashboard' | '/energy' | '/environment'
+  id:
+    | '__root__'
+    | '/'
+    | '/_app'
+    | '/_app/dashboard'
+    | '/_app/energy'
+    | '/_app/environment'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -78,15 +102,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDashboardRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/energy': {
+      id: '/_app/energy'
+      path: '/energy'
+      fullPath: '/energy'
+      preLoaderRoute: typeof AppEnergyRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/environment': {
+      id: '/_app/environment'
+      path: '/environment'
+      fullPath: '/environment'
+      preLoaderRoute: typeof AppEnvironmentRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
   AppDashboardRoute: typeof AppDashboardRoute
+  AppEnergyRoute: typeof AppEnergyRoute
+  AppEnvironmentRoute: typeof AppEnvironmentRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppDashboardRoute: AppDashboardRoute,
+  AppEnergyRoute: AppEnergyRoute,
+  AppEnvironmentRoute: AppEnvironmentRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
