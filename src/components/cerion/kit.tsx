@@ -53,12 +53,12 @@ export function SectionCard({
   children,
   className,
 }: {
-  title?: string;
-  description?: string;
-  icon?: React.ComponentType<{ className?: string }>;
+  title?: string | undefined;
+  description?: string | undefined;
+  icon?: React.ComponentType<{ className?: string }> | undefined;
   actions?: ReactNode;
   children: ReactNode;
-  className?: string;
+  className?: string | undefined;
 }) {
   return (
     <section className={cn("surface-card p-5 sm:p-6", className)}>
@@ -205,7 +205,7 @@ function Sparkline() {
   );
 }
 
-export function ChartPlaceholder({ variant = "line", height = 200 }: { variant?: ChartCardProps["variant"]; height?: number }) {
+export function ChartPlaceholder({ variant = "line", height = 200 }: { variant?: ChartCardProps["variant"] | undefined; height?: number | undefined }) {
   return (
     <div
       className="relative overflow-hidden rounded-xl border border-dashed border-border bg-muted/25"
@@ -261,7 +261,7 @@ export function ChartCard({ title, icon: Icon, description, variant = "line", he
   );
 }
 
-export function GaugePlaceholder({ unit }: { unit?: string }) {
+export function GaugePlaceholder({ unit }: { unit?: string | undefined }) {
   return (
     <div className="relative mx-auto grid h-36 w-36 place-items-center">
       <svg viewBox="0 0 120 120" className="absolute inset-0 h-full w-full -rotate-90">
@@ -353,7 +353,7 @@ export function EmptyState({ icon: Icon, title, description, action, compact = f
   );
 }
 
-export function DisabledAction({ children, className }: { children: ReactNode; className?: string }) {
+export function DisabledAction({ children, className }: { children: ReactNode; className?: string | undefined }) {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
@@ -421,7 +421,7 @@ export function TableSkeleton({ rows = 5, cols = 6 }: { rows?: number; cols?: nu
   );
 }
 
-export function ShimmerBar({ className }: { className?: string }) {
+export function ShimmerBar({ className }: { className?: string | undefined }) {
   return <div className={cn("shimmer h-2 rounded-full bg-muted", className)} />;
 }
 
@@ -432,9 +432,9 @@ export function SearchInput({
   label,
   className,
 }: {
-  placeholder?: string;
-  label?: string;
-  className?: string;
+  placeholder?: string | undefined;
+  label?: string | undefined;
+  className?: string | undefined;
 }) {
   return (
     <div className={cn("relative min-w-0", className)}>
@@ -456,9 +456,9 @@ export function SelectShell({
 }: {
   placeholder: string;
   options: string[];
-  icon?: React.ComponentType<{ className?: string }>;
+  icon?: React.ComponentType<{ className?: string }> | undefined;
   ariaLabel: string;
-  className?: string;
+  className?: string | undefined;
 }) {
   return (
     <Select>
@@ -477,7 +477,7 @@ export function SelectShell({
   );
 }
 
-export function ClassroomSelector({ className }: { className?: string }) {
+export function ClassroomSelector({ className }: { className?: string | undefined }) {
   return (
     <Select>
       <SelectTrigger className={cn("h-10 min-w-[10rem] rounded-xl", className)} aria-label="Select classroom">
@@ -493,7 +493,7 @@ export function ClassroomSelector({ className }: { className?: string }) {
   );
 }
 
-export function DateRangeSelector({ className }: { className?: string }) {
+export function DateRangeSelector({ className }: { className?: string | undefined }) {
   return (
     <DisabledAction className={className}>
       <Button variant="outline" className="h-11 justify-start gap-2 rounded-xl text-muted-foreground" disabled>
