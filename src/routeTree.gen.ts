@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteImport } from './routes/_app'
+import { Route as AppAiInsightsRouteImport } from './routes/_app.ai-insights'
 import { Route as AppAlertsRouteImport } from './routes/_app.alerts'
 import { Route as AppDashboardRouteImport } from './routes/_app.dashboard'
 import { Route as AppDevicesRouteImport } from './routes/_app.devices'
@@ -18,6 +19,7 @@ import { Route as AppEnergyRouteImport } from './routes/_app.energy'
 import { Route as AppEnvironmentRouteImport } from './routes/_app.environment'
 import { Route as AppHistoryRouteImport } from './routes/_app.history'
 import { Route as AppReportsRouteImport } from './routes/_app.reports'
+import { Route as AppSettingsRouteImport } from './routes/_app.settings'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -27,6 +29,11 @@ const IndexRoute = IndexRouteImport.update({
 const AppRoute = AppRouteImport.update({
   id: '/_app',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AppAiInsightsRoute = AppAiInsightsRouteImport.update({
+  id: '/ai-insights',
+  path: '/ai-insights',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppAlertsRoute = AppAlertsRouteImport.update({
   id: '/alerts',
@@ -63,9 +70,15 @@ const AppReportsRoute = AppReportsRouteImport.update({
   path: '/reports',
   getParentRoute: () => AppRoute,
 } as any)
+const AppSettingsRoute = AppSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/ai-insights': typeof AppAiInsightsRoute
   '/alerts': typeof AppAlertsRoute
   '/dashboard': typeof AppDashboardRoute
   '/devices': typeof AppDevicesRoute
@@ -73,9 +86,11 @@ export interface FileRoutesByFullPath {
   '/environment': typeof AppEnvironmentRoute
   '/history': typeof AppHistoryRoute
   '/reports': typeof AppReportsRoute
+  '/settings': typeof AppSettingsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/ai-insights': typeof AppAiInsightsRoute
   '/alerts': typeof AppAlertsRoute
   '/dashboard': typeof AppDashboardRoute
   '/devices': typeof AppDevicesRoute
@@ -83,11 +98,13 @@ export interface FileRoutesByTo {
   '/environment': typeof AppEnvironmentRoute
   '/history': typeof AppHistoryRoute
   '/reports': typeof AppReportsRoute
+  '/settings': typeof AppSettingsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
+  '/_app/ai-insights': typeof AppAiInsightsRoute
   '/_app/alerts': typeof AppAlertsRoute
   '/_app/dashboard': typeof AppDashboardRoute
   '/_app/devices': typeof AppDevicesRoute
@@ -95,11 +112,13 @@ export interface FileRoutesById {
   '/_app/environment': typeof AppEnvironmentRoute
   '/_app/history': typeof AppHistoryRoute
   '/_app/reports': typeof AppReportsRoute
+  '/_app/settings': typeof AppSettingsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/ai-insights'
     | '/alerts'
     | '/dashboard'
     | '/devices'
@@ -107,9 +126,11 @@ export interface FileRouteTypes {
     | '/environment'
     | '/history'
     | '/reports'
+    | '/settings'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/ai-insights'
     | '/alerts'
     | '/dashboard'
     | '/devices'
@@ -117,10 +138,12 @@ export interface FileRouteTypes {
     | '/environment'
     | '/history'
     | '/reports'
+    | '/settings'
   id:
     | '__root__'
     | '/'
     | '/_app'
+    | '/_app/ai-insights'
     | '/_app/alerts'
     | '/_app/dashboard'
     | '/_app/devices'
@@ -128,6 +151,7 @@ export interface FileRouteTypes {
     | '/_app/environment'
     | '/_app/history'
     | '/_app/reports'
+    | '/_app/settings'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -150,6 +174,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_app/ai-insights': {
+      id: '/_app/ai-insights'
+      path: '/ai-insights'
+      fullPath: '/ai-insights'
+      preLoaderRoute: typeof AppAiInsightsRouteImport
+      parentRoute: typeof AppRoute
     }
     '/_app/alerts': {
       id: '/_app/alerts'
@@ -200,10 +231,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppReportsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/settings': {
+      id: '/_app/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AppSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
+  AppAiInsightsRoute: typeof AppAiInsightsRoute
   AppAlertsRoute: typeof AppAlertsRoute
   AppDashboardRoute: typeof AppDashboardRoute
   AppDevicesRoute: typeof AppDevicesRoute
@@ -211,9 +250,11 @@ interface AppRouteChildren {
   AppEnvironmentRoute: typeof AppEnvironmentRoute
   AppHistoryRoute: typeof AppHistoryRoute
   AppReportsRoute: typeof AppReportsRoute
+  AppSettingsRoute: typeof AppSettingsRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAiInsightsRoute: AppAiInsightsRoute,
   AppAlertsRoute: AppAlertsRoute,
   AppDashboardRoute: AppDashboardRoute,
   AppDevicesRoute: AppDevicesRoute,
@@ -221,6 +262,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppEnvironmentRoute: AppEnvironmentRoute,
   AppHistoryRoute: AppHistoryRoute,
   AppReportsRoute: AppReportsRoute,
+  AppSettingsRoute: AppSettingsRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
