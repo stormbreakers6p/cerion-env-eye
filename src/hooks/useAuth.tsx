@@ -1,19 +1,19 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { onAuthStateChanged, signOut as fbSignOut, type User } from "firebase/auth";
-import { auth, isFirebaseConfigured } from "@/lib/firebase";
+import { getFirebaseAuth, isFirebaseConfigured } from "@/lib/firebase";
 
 type AuthContextValue = {
   user: User | null;
   loading: boolean;
-  signOut: () => Promise<void>;
   configured: boolean;
+  signOut: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue>({
   user: null,
   loading: true,
-  signOut: async () => {},
   configured: false,
+  signOut: async () => {},
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -25,7 +25,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
       return;
     }
-    return onAuthStateChanged(auth, (next) => {
+    return onAuthStateChanged(getFirebaseAuth(), (next) => {
       setUser(next);
       setLoading(false);
     });
@@ -37,7 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       loading,
       configured: isFirebaseConfigured,
       signOut: async () => {
-        if (isFirebaseConfigured) await fbSignOut(auth);
+        if (isFirebaseConfigured) await fbSignOut(getFirebaseAuth());
         setUser(null);
       },
     }),

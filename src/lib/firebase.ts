@@ -1,5 +1,5 @@
 import { initializeApp, getApps, getApp, type FirebaseOptions } from "firebase/app";
-import { getAuth, browserLocalPersistence, browserSessionPersistence } from "firebase/auth";
+import { getAuth, type Auth } from "firebase/auth";
 
 const env = import.meta.env as Record<string, string | undefined>;
 
@@ -16,7 +16,12 @@ export const isFirebaseConfigured = Boolean(
   firebaseConfig.apiKey && firebaseConfig.authDomain && firebaseConfig.projectId && firebaseConfig.appId,
 );
 
-export const firebaseApp = getApps().length ? getApp() : initializeApp(firebaseConfig);
-export const auth = getAuth(firebaseApp);
+let cached: Auth | null = null;
 
-export { browserLocalPersistence, browserSessionPersistence };
+/** Client-only. Never call during SSR. */
+export function getFirebaseAuth(): Auth {
+  if (cached) return cached;
+  const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+  cached = getAuth(app);
+  return cached;
+}
