@@ -1,5 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Bell, Globe, Info, LayoutDashboard, Plug, School, SlidersHorizontal, Palette, Table2 } from "lucide-react";
+import { Bell, Globe, Info, LayoutDashboard, Plug, School, ShieldCheck, SlidersHorizontal, Palette, Table2 } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
+import { useRole } from "@/hooks/useRole";
+import { ROLES } from "@/lib/rbac";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -39,24 +42,26 @@ const THRESHOLDS = ["Temperature", "Humidity", "CO₂", "VOC", "AQI", "Power"];
 
 function SettingsPage() {
   const { theme, setTheme } = useTheme();
+  const { t, locale, setLocale } = useI18n();
+  const { role, setRoleOverride } = useRole();
 
   return (
     <>
       <PageHeader
-        eyebrow="Configuration"
-        title="Settings"
-        description="Interface preferences for the CERION platform. Operational settings activate after integration."
+        eyebrow={t("settings.eyebrow")}
+        title={t("settings.title")}
+        description={t("settings.description")}
         actions={
           <DisabledAction>
             <Button className="h-11 rounded-xl" disabled>
-              Save settings
+              {t("settings.save")}
             </Button>
           </DisabledAction>
         }
       />
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <SectionCard title="Theme" icon={Palette} description="Appearance preference is saved on this device">
+        <SectionCard title={t("settings.theme")} icon={Palette} description={t("settings.themeHint")}>
           <div className="flex flex-wrap gap-2">
             {THEMES.map((option) => (
               <Button
@@ -65,15 +70,42 @@ function SettingsPage() {
                 className="h-11 rounded-xl"
                 onClick={() => setTheme(option.value)}
               >
-                {option.label}
+                {t(`settings.${option.value}`)}
               </Button>
             ))}
           </div>
         </SectionCard>
 
-        <SectionCard title="Language" icon={Globe} description="Full translation arrives in a later phase">
-          <SelectShell placeholder="English" ariaLabel="Select language" options={["English", "Vietnamese"]} />
+        <SectionCard title={t("common.language")} icon={Globe} description={t("settings.languageHint")}>
+          <div className="flex flex-wrap gap-2">
+            {(["en", "vi"] as const).map((value) => (
+              <Button
+                key={value}
+                variant={locale === value ? "default" : "outline"}
+                className="h-11 rounded-xl"
+                onClick={() => setLocale(value)}
+              >
+                {value === "en" ? t("common.english") : t("common.vietnamese")}
+              </Button>
+            ))}
+          </div>
         </SectionCard>
+
+        <SectionCard title={t("role.preview")} icon={ShieldCheck} description={t("role.previewHint")}>
+          <div className="flex flex-wrap gap-2">
+            {ROLES.map((value) => (
+              <Button
+                key={value}
+                variant={role === value ? "default" : "outline"}
+                className="h-11 rounded-xl"
+                onClick={() => setRoleOverride(value)}
+              >
+                {t(`role.${value}`)}
+              </Button>
+            ))}
+          </div>
+        </SectionCard>
+
 
         <SectionCard title="Notifications" icon={Bell}>
           <div className="space-y-3">
