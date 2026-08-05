@@ -7,29 +7,34 @@ import {
   History,
   LayoutDashboard,
   Settings,
+  ShieldCheck,
   Sparkles,
   User,
   Zap,
 } from "lucide-react";
+import type { Permission } from "@/lib/rbac";
 
 export type NavItem = {
-  label: string;
+  labelKey: string;
+  descriptionKey: string;
   to: string;
   icon: typeof LayoutDashboard;
-  description: string;
+  /** Permission required to see and open this item. */
+  permission?: Permission;
 };
 
 export const APP_NAV: NavItem[] = [
-  { label: "Dashboard", to: "/dashboard", icon: LayoutDashboard, description: "Executive overview" },
-  { label: "Environment", to: "/environment", icon: Gauge, description: "Air & comfort" },
-  { label: "Energy", to: "/energy", icon: Zap, description: "Electricity monitoring" },
-  { label: "Devices", to: "/devices", icon: Cpu, description: "Connected hardware" },
-  { label: "Alerts", to: "/alerts", icon: Bell, description: "Threshold events" },
-  { label: "History", to: "/history", icon: History, description: "Recorded readings" },
-  { label: "Reports", to: "/reports", icon: BarChart3, description: "Periodic summaries" },
-  { label: "AI Insights", to: "/ai-insights", icon: Sparkles, description: "CERION assistant" },
-  { label: "Settings", to: "/settings", icon: Settings, description: "Platform preferences" },
-  { label: "Profile", to: "/profile", icon: User, description: "Account details" },
+  { labelKey: "nav.dashboard", to: "/dashboard", icon: LayoutDashboard, descriptionKey: "nav.desc.dashboard", permission: "view.dashboard" },
+  { labelKey: "nav.environment", to: "/environment", icon: Gauge, descriptionKey: "nav.desc.environment", permission: "view.environment" },
+  { labelKey: "nav.energy", to: "/energy", icon: Zap, descriptionKey: "nav.desc.energy", permission: "view.energy" },
+  { labelKey: "nav.devices", to: "/devices", icon: Cpu, descriptionKey: "nav.desc.devices", permission: "manage.devices" },
+  { labelKey: "nav.alerts", to: "/alerts", icon: Bell, descriptionKey: "nav.desc.alerts", permission: "view.alerts" },
+  { labelKey: "nav.history", to: "/history", icon: History, descriptionKey: "nav.desc.history", permission: "view.history" },
+  { labelKey: "nav.reports", to: "/reports", icon: BarChart3, descriptionKey: "nav.desc.reports", permission: "view.reports" },
+  { labelKey: "nav.ai", to: "/ai-insights", icon: Sparkles, descriptionKey: "nav.desc.ai", permission: "view.ai" },
+  { labelKey: "nav.management", to: "/management", icon: ShieldCheck, descriptionKey: "nav.desc.management", permission: "management.access" },
+  { labelKey: "nav.settings", to: "/settings", icon: Settings, descriptionKey: "nav.desc.settings", permission: "settings.view" },
+  { labelKey: "nav.profile", to: "/profile", icon: User, descriptionKey: "nav.desc.profile" },
 ];
 
 export const BRAND = {
