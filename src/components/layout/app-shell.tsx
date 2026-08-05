@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { Link, useRouterState } from "@tanstack/react-router";
-import { Bell, ChevronLeft, Menu, Search, User, Info, Settings, X, PlugZap } from "lucide-react";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import { Bell, ChevronLeft, Menu, Search, User, Info, Settings, X, PlugZap, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,6 +19,7 @@ import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { CerionLogo, CerionWordmark } from "@/components/brand/logo";
 import { ClassroomSelector, StatusBadge } from "@/components/cerion/kit";
 import { APP_NAV, BRAND, NOT_CONNECTED } from "@/lib/navigation";
+import { useAuth } from "@/hooks/useAuth";
 
 function SidebarNav({ collapsed, onNavigate }: { collapsed: boolean; onNavigate?: () => void }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
@@ -108,6 +109,14 @@ function NotificationPanel() {
 }
 
 function ProfileMenu() {
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  async function handleSignOut() {
+    await signOut();
+    navigate({ to: "/login", replace: true });
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -119,7 +128,7 @@ function ProfileMenu() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56 rounded-xl">
         <DropdownMenuLabel>
-          <span className="block text-sm">Name not provided</span>
+          <span className="block truncate text-sm">{user?.email ?? "Name not provided"}</span>
           <span className="block text-xs font-normal text-muted-foreground">Role not configured</span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -137,6 +146,10 @@ function ProfileMenu() {
           <Link to="/">
             <Info className="h-4 w-4" /> About CERION
           </Link>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onSelect={handleSignOut} className="gap-2 rounded-lg text-destructive focus:text-destructive">
+          <LogOut className="h-4 w-4" /> Sign out
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
