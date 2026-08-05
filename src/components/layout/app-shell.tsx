@@ -19,6 +19,7 @@ import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { CerionLogo, CerionWordmark } from "@/components/brand/logo";
 import { ClassroomSelector, StatusBadge } from "@/components/cerion/kit";
 import { APP_NAV, BRAND, NOT_CONNECTED } from "@/lib/navigation";
+import { useAuth } from "@/hooks/useAuth";
 
 function SidebarNav({ collapsed, onNavigate }: { collapsed: boolean; onNavigate?: () => void }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
