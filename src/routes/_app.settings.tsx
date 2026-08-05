@@ -1,5 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Bell, Globe, Info, LayoutDashboard, Plug, School, SlidersHorizontal, Palette, Table2 } from "lucide-react";
+import { Bell, Globe, Info, LayoutDashboard, Plug, School, ShieldCheck, SlidersHorizontal, Palette, Table2 } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
+import { useRole } from "@/hooks/useRole";
+import { ROLES } from "@/lib/rbac";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
