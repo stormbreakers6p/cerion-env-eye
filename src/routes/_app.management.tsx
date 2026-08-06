@@ -63,13 +63,22 @@ function ManagementPage() {
 
       {current && (
         <SectionCard title={t(current.labelKey)} icon={ShieldCheck}>
-          <EmptyState
-            icon={ShieldCheck}
-            title={t("management.emptyTitle")}
-            description={t("management.emptyDescription")}
-          />
+          {current.key === "users" ? (
+            <UserManager />
+          ) : current.key === "teachers" ? (
+            <UserManager roleFilter={["teacher"]} />
+          ) : current.key === "viewers" ? (
+            <UserManager roleFilter={["viewer"]} />
+          ) : (
+            <EmptyState
+              icon={ShieldCheck}
+              title={t("management.emptyTitle")}
+              description={t("management.emptyDescription")}
+            />
+          )}
         </SectionCard>
       )}
+
 
       <SectionCard title={t("management.permissions")} icon={ShieldCheck}>
         <div className="flex flex-wrap gap-2">
