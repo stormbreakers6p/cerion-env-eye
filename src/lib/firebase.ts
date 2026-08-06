@@ -19,11 +19,43 @@ export const isFirebaseConfigured = Boolean(
 );
 
 let cached: Auth | null = null;
+let cachedDb: Firestore | null = null;
+
+function app(): FirebaseApp {
+  return getApps().length ? getApp() : initializeApp(firebaseConfig);
+}
 
 /** Client-only. Never call during SSR. */
 export function getFirebaseAuth(): Auth {
   if (cached) return cached;
-  const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
-  cached = getAuth(app);
+  cached = getAuth(app());
   return cached;
 }
+
+/** Client-only Firestore instance used for user profiles and organisation data. */
+export function getFirebaseDb(): Firestore {
+  if (cachedDb) return cachedDb;
+  cachedDb = getFirestore(app());
+  return cachedDb;
+}
+
+/**
+ * Isolated Firebase app used to create accounts without replacing the current
+ * session (createUserWithEmailAndPassword signs the new user in on its app).
+ * Callers must dispose it with `disposeSecondaryAuth`.
+ */
+export async function withSecondaryAuth<T>(run: (auth: Auth) => Promise<T>): Promise<T> {
+  const secondary = initializeApp(firebaseConfig, `cerion-provisioning-${Date.now()}`);
+  const secondaryAuth = getAuth(secondary);
+  try {
+    return await run(secondaryAuth);
+  } finally {
+    try {
+      await secondaryAuth.signOut();
+    } catch {
+      /* ignore */
+    }
+    await deleteApp(secondary);
+  }
+}
+
