@@ -7,6 +7,7 @@ import { useRole } from "@/hooks/useRole";
 import { useI18n } from "@/lib/i18n";
 import { MANAGEMENT_SECTIONS, ROLE_PERMISSIONS, hasPermission } from "@/lib/rbac";
 import { readAuditLog } from "@/lib/audit";
+import { UserManager } from "@/components/management/user-manager";
 
 export const Route = createFileRoute("/_app/management")({
   head: () => ({
@@ -63,13 +64,22 @@ function ManagementPage() {
 
       {current && (
         <SectionCard title={t(current.labelKey)} icon={ShieldCheck}>
-          <EmptyState
-            icon={ShieldCheck}
-            title={t("management.emptyTitle")}
-            description={t("management.emptyDescription")}
-          />
+          {current.key === "users" ? (
+            <UserManager />
+          ) : current.key === "teachers" ? (
+            <UserManager roleFilter={["teacher"]} />
+          ) : current.key === "viewers" ? (
+            <UserManager roleFilter={["viewer"]} />
+          ) : (
+            <EmptyState
+              icon={ShieldCheck}
+              title={t("management.emptyTitle")}
+              description={t("management.emptyDescription")}
+            />
+          )}
         </SectionCard>
       )}
+
 
       <SectionCard title={t("management.permissions")} icon={ShieldCheck}>
         <div className="flex flex-wrap gap-2">
