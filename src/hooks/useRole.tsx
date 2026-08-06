@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 import { getFirebaseAuth, isFirebaseConfigured } from "@/lib/firebase";
 import { isRole, type Permission, type Role, hasPermission as rbacHas } from "@/lib/rbac";
 import { useAuth } from "@/hooks/useAuth";
+import { getUserProfile } from "@/lib/users";
 
 const ROLE_OVERRIDE_KEY = "cerion.role";
 const SCHOOL_KEY = "cerion.selectedSchool";
@@ -29,7 +30,7 @@ const RoleContext = createContext<RoleContextValue>({
 });
 
 export function RoleProvider({ children }: { children: ReactNode }) {
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, signOut } = useAuth();
   const [claimRole, setClaimRole] = useState<Role | null>(null);
   const [override, setOverride] = useState<Role | null>(null);
   const [selectedSchool, setSelectedSchoolState] = useState<string | null>(null);
