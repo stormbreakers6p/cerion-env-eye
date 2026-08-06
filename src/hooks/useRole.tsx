@@ -55,7 +55,19 @@ export function RoleProvider({ children }: { children: ReactNode }) {
       try {
         const token = await getFirebaseAuth().currentUser?.getIdTokenResult();
         const claim = token?.claims?.["role"];
-        if (!cancelled) setClaimRole(isRole(claim) ? claim : null);
+        if (!cancelled && isRole(claim)) {
+          setClaimRole(claim);
+        } else {
+          // Fall back to the stored CERION profile (created by user management).
+          const profile = await getUserProfile(user.uid).catch(() => null);
+          if (cancelled) return;
+          if (profile?.disabled) {
+            await signOut();
+            return;
+          }
+          setClaimRole(profile ? profile.role : null);
+          if (profile?.school) setSelectedSchoolState(profile.school);
+        }
       } catch {
         if (!cancelled) setClaimRole(null);
       } finally {
@@ -66,7 +78,8 @@ export function RoleProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, [user, authLoading]);
+  }, [user, authLoading, signOut]);
+
 
   const setRoleOverride = useCallback((next: Role) => {
     setOverride(next);
