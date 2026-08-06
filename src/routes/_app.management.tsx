@@ -7,6 +7,7 @@ import { useRole } from "@/hooks/useRole";
 import { useI18n } from "@/lib/i18n";
 import { MANAGEMENT_SECTIONS, ROLE_PERMISSIONS, hasPermission } from "@/lib/rbac";
 import { readAuditLog } from "@/lib/audit";
+import { UserManager } from "@/components/management/user-manager";
 
 export const Route = createFileRoute("/_app/management")({
   head: () => ({
