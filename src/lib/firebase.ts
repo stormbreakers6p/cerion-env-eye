@@ -10,12 +10,12 @@ export const EXPECTED_PROJECT_ID = "cerion-platform";
 // Firebase web config is publishable by design (protected by Firebase security
 // rules) but is still read from environment variables, never hardcoded.
 const firebaseConfig: FirebaseOptions = {
-  apiKey: env["VITE_FIREBASE_API_KEY"],
-  authDomain: env["VITE_FIREBASE_AUTH_DOMAIN"],
-  projectId: env["VITE_FIREBASE_PROJECT_ID"],
-  storageBucket: env["VITE_FIREBASE_STORAGE_BUCKET"],
-  messagingSenderId: env["VITE_FIREBASE_MESSAGING_SENDER_ID"],
-  appId: env["VITE_FIREBASE_APP_ID"],
+  apiKey: env["VITE_FIREBASE_API_KEY"] ?? "",
+  authDomain: env["VITE_FIREBASE_AUTH_DOMAIN"] ?? "",
+  projectId: env["VITE_FIREBASE_PROJECT_ID"] ?? "",
+  storageBucket: env["VITE_FIREBASE_STORAGE_BUCKET"] ?? "",
+  messagingSenderId: env["VITE_FIREBASE_MESSAGING_SENDER_ID"] ?? "",
+  appId: env["VITE_FIREBASE_APP_ID"] ?? "",
 };
 
 export const isFirebaseConfigured = Boolean(
@@ -25,7 +25,7 @@ export const isFirebaseConfigured = Boolean(
 /** True only when the configured project is the expected CERION project. */
 export const isExpectedProject = firebaseConfig.projectId === EXPECTED_PROJECT_ID;
 
-export const firebaseProjectId = firebaseConfig.projectId ?? null;
+export const firebaseProjectId = firebaseConfig.projectId || null;
 
 let cachedApp: FirebaseApp | null = null;
 let cached: Auth | null = null;
