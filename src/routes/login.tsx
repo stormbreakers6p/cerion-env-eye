@@ -212,8 +212,12 @@ function LoginPage() {
 
               <div className="mt-6 border-t border-border pt-5 text-center">
                 <p className="text-xs text-muted-foreground">
-                  Accounts are created by the administrator. Public registration is not available.
+                  Don&apos;t have an account?{" "}
+                  <Link to="/register" className="font-medium text-primary hover:underline">
+                    Create one
+                  </Link>
                 </p>
+
                 <Link
                   to="/"
                   className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
