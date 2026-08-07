@@ -1,6 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { signInWithEmailAndPassword, setPersistence, browserLocalPersistence, browserSessionPersistence } from "firebase/auth";
 import { ArrowLeft, Eye, EyeOff, Loader2, Lock, Mail, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,8 +8,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { CerionWordmark } from "@/components/brand/logo";
 import { useAuth } from "@/hooks/useAuth";
-import { getFirebaseAuth, isFirebaseConfigured } from "@/lib/firebase";
+import { isFirebaseConfigured } from "@/lib/firebase";
+import { firebaseErrorMessage, loginWithEmail } from "@/lib/auth";
 import { BRAND } from "@/lib/navigation";
+
 
 export const Route = createFileRoute("/login")({
   ssr: false,
@@ -64,16 +65,15 @@ function LoginPage() {
 
     setSubmitting(true);
     try {
-      const auth = getFirebaseAuth();
-      await setPersistence(auth, remember ? browserLocalPersistence : browserSessionPersistence);
-      await signInWithEmailAndPassword(auth, email.trim(), password);
+      await loginWithEmail(email, password, remember);
       navigate({ to: "/dashboard", replace: true });
-    } catch {
-      setError(GENERIC_ERROR);
+    } catch (err) {
+      setError(firebaseErrorMessage(err));
     } finally {
       setSubmitting(false);
     }
   }
+
 
   return (
     <div className="relative flex min-h-screen flex-col bg-background">
@@ -212,8 +212,12 @@ function LoginPage() {
 
               <div className="mt-6 border-t border-border pt-5 text-center">
                 <p className="text-xs text-muted-foreground">
-                  Accounts are created by the administrator. Public registration is not available.
+                  Don&apos;t have an account?{" "}
+                  <Link to="/register" className="font-medium text-primary hover:underline">
+                    Create one
+                  </Link>
                 </p>
+
                 <Link
                   to="/"
                   className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"

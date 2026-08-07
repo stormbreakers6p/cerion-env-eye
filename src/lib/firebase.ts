@@ -4,38 +4,56 @@ import { getFirestore, type Firestore } from "firebase/firestore";
 
 const env = import.meta.env as Record<string, string | undefined>;
 
-// Firebase web config is publishable by design (protected by Firebase security rules).
+/** Firebase project this app is allowed to talk to. */
+export const EXPECTED_PROJECT_ID = "cerion-platform";
+
+// Firebase web config is publishable by design (protected by Firebase security
+// rules) but is still read from environment variables, never hardcoded.
 const firebaseConfig: FirebaseOptions = {
-  apiKey: env["VITE_FIREBASE_API_KEY"] ?? "AIzaSyCBs47AQkI-nUNOGqrJ0YfITh_YMqvZxAA",
-  authDomain: env["VITE_FIREBASE_AUTH_DOMAIN"] ?? "cerion-platform.firebaseapp.com",
-  projectId: env["VITE_FIREBASE_PROJECT_ID"] ?? "cerion-platform",
-  storageBucket: env["VITE_FIREBASE_STORAGE_BUCKET"] ?? "cerion-platform.firebasestorage.app",
-  messagingSenderId: env["VITE_FIREBASE_MESSAGING_SENDER_ID"] ?? "687869164022",
-  appId: env["VITE_FIREBASE_APP_ID"] ?? "1:687869164022:web:fe05dc33d6ef371aedafd7",
+  apiKey: env["VITE_FIREBASE_API_KEY"] ?? "",
+  authDomain: env["VITE_FIREBASE_AUTH_DOMAIN"] ?? "",
+  projectId: env["VITE_FIREBASE_PROJECT_ID"] ?? "",
+  storageBucket: env["VITE_FIREBASE_STORAGE_BUCKET"] ?? "",
+  messagingSenderId: env["VITE_FIREBASE_MESSAGING_SENDER_ID"] ?? "",
+  appId: env["VITE_FIREBASE_APP_ID"] ?? "",
 };
 
 export const isFirebaseConfigured = Boolean(
   firebaseConfig.apiKey && firebaseConfig.authDomain && firebaseConfig.projectId && firebaseConfig.appId,
 );
 
+/** True only when the configured project is the expected CERION project. */
+export const isExpectedProject = firebaseConfig.projectId === EXPECTED_PROJECT_ID;
+
+export const firebaseProjectId = firebaseConfig.projectId || null;
+
+let cachedApp: FirebaseApp | null = null;
 let cached: Auth | null = null;
 let cachedDb: Firestore | null = null;
 
-function app(): FirebaseApp {
-  return getApps().length ? getApp() : initializeApp(firebaseConfig);
+/** Client-only. Never call during SSR. */
+export function getFirebaseApp(): FirebaseApp {
+  if (cachedApp) return cachedApp;
+  if (!isExpectedProject) {
+    console.warn(
+      `[CERION] Firebase projectId is "${firebaseConfig.projectId}" but "${EXPECTED_PROJECT_ID}" was expected.`,
+    );
+  }
+  cachedApp = getApps().length ? getApp() : initializeApp(firebaseConfig);
+  return cachedApp;
 }
 
 /** Client-only. Never call during SSR. */
 export function getFirebaseAuth(): Auth {
   if (cached) return cached;
-  cached = getAuth(app());
+  cached = getAuth(getFirebaseApp());
   return cached;
 }
 
 /** Client-only Firestore instance used for user profiles and organisation data. */
 export function getFirebaseDb(): Firestore {
   if (cachedDb) return cachedDb;
-  cachedDb = getFirestore(app());
+  cachedDb = getFirestore(getFirebaseApp());
   return cachedDb;
 }
 
@@ -58,4 +76,3 @@ export async function withSecondaryAuth<T>(run: (auth: Auth) => Promise<T>): Pro
     await deleteApp(secondary);
   }
 }
-
