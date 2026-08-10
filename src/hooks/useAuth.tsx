@@ -6,6 +6,7 @@ type AuthContextValue = {
   user: User | null;
   loading: boolean;
   configured: boolean;
+  refreshUser: () => Promise<void>;
   signOut: () => Promise<void>;
 };
 
@@ -13,6 +14,7 @@ const AuthContext = createContext<AuthContextValue>({
   user: null,
   loading: true,
   configured: false,
+  refreshUser: async () => {},
   signOut: async () => {},
 });
 
@@ -36,6 +38,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       user,
       loading,
       configured: isFirebaseConfigured,
+      refreshUser: async () => {
+        const current = getFirebaseAuth().currentUser;
+        if (!current) return;
+        await current.reload();
+        setUser(getFirebaseAuth().currentUser);
+      },
       signOut: async () => {
         if (isFirebaseConfigured) await fbSignOut(getFirebaseAuth());
         setUser(null);

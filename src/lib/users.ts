@@ -7,6 +7,7 @@
  */
 import {
   createUserWithEmailAndPassword,
+  sendEmailVerification,
   sendPasswordResetEmail,
   updateProfile,
 } from "firebase/auth";
@@ -22,6 +23,7 @@ import {
   serverTimestamp,
   setDoc,
   updateDoc,
+  where,
   type Unsubscribe,
 } from "firebase/firestore";
 import { getFirebaseAuth, getFirebaseDb, withSecondaryAuth } from "@/lib/firebase";
@@ -100,18 +102,30 @@ function readTime(value: unknown): string | null {
   return typeof value === "string" ? value : null;
 }
 
-export async function listUsers(): Promise<UserProfile[]> {
-  const snap = await getDocs(query(collection(getFirebaseDb(), USERS_COLLECTION), orderBy("fullName")));
+function usersQuery(actorRole: Role | null, actorSchool: string | null) {
+  const users = collection(getFirebaseDb(), USERS_COLLECTION);
+  if (actorRole === "admin") {
+    if (!actorSchool) throw new Error("permission");
+    return query(users, where("school", "==", actorSchool), orderBy("fullName"));
+  }
+  if (actorRole === "owner") return query(users, orderBy("fullName"));
+  throw new Error("permission");
+}
+
+export async function listUsers(actorRole: Role | null, actorSchool: string | null): Promise<UserProfile[]> {
+  const snap = await getDocs(usersQuery(actorRole, actorSchool));
   return snap.docs.map((d) => toProfile(d.id, d.data()));
 }
 
-/** Live user list; returns an unsubscribe function. */
+/** Live user list scoped to the acting administrator's authorized school. */
 export function subscribeUsers(
+  actorRole: Role | null,
+  actorSchool: string | null,
   onData: (users: UserProfile[]) => void,
   onError: (error: unknown) => void,
 ): Unsubscribe {
   return onSnapshot(
-    collection(getFirebaseDb(), USERS_COLLECTION),
+    usersQuery(actorRole, actorSchool),
     (snap) => {
       const rows = snap.docs.map((d) => toProfile(d.id, d.data()));
       rows.sort((a, b) => a.fullName.localeCompare(b.fullName));
@@ -140,6 +154,7 @@ export async function createUserAccount(
     if (input.fullName.trim()) {
       await updateProfile(credential.user, { displayName: input.fullName.trim() });
     }
+    await sendEmailVerification(credential.user);
     return credential.user.uid;
   });
 

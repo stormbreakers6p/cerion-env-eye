@@ -1,69 +1,32 @@
-/**
- * Email/password authentication helpers for CERION.
- *
- * Registration creates the Firebase Auth account and the matching Firestore
- * profile document at `users/{uid}` (lowercase collection).
- */
 import {
   browserLocalPersistence,
   browserSessionPersistence,
-  createUserWithEmailAndPassword,
+  sendEmailVerification,
+  sendPasswordResetEmail,
   setPersistence,
   signInWithEmailAndPassword,
   signOut,
-  updateProfile,
+  type User,
   type UserCredential,
 } from "firebase/auth";
-import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
-import { getFirebaseAuth, getFirebaseDb } from "@/lib/firebase";
-import { USERS_COLLECTION } from "@/lib/users";
-
-export const DEFAULT_ROLE = "user";
-export const DEFAULT_STATUS = "active";
-
-export type RegisterInput = {
-  name: string;
-  email: string;
-  password: string;
-};
+import { getFirebaseAuth } from "@/lib/firebase";
 
 /** Persist the session in localStorage (default) or for the tab only. */
 export async function applyPersistence(remember: boolean): Promise<void> {
   await setPersistence(getFirebaseAuth(), remember ? browserLocalPersistence : browserSessionPersistence);
 }
 
-/** Creates `users/{uid}` if it does not exist yet. */
-export async function ensureUserDocument(uid: string, name: string, email: string): Promise<void> {
-  const ref = doc(getFirebaseDb(), USERS_COLLECTION, uid);
-  const existing = await getDoc(ref);
-  if (existing.exists()) return;
-  await setDoc(ref, {
-    uid,
-    name,
-    fullName: name,
-    email,
-    role: DEFAULT_ROLE,
-    status: DEFAULT_STATUS,
-    disabled: false,
-    school: "",
-    classrooms: [],
-    createdAt: serverTimestamp(),
-  });
-}
-
-export async function registerWithEmail(input: RegisterInput, remember = true): Promise<UserCredential> {
-  await applyPersistence(remember);
-  const name = input.name.trim();
-  const email = input.email.trim();
-  const credential = await createUserWithEmailAndPassword(getFirebaseAuth(), email, input.password);
-  if (name) await updateProfile(credential.user, { displayName: name });
-  await ensureUserDocument(credential.user.uid, name, email);
-  return credential;
-}
-
 export async function loginWithEmail(email: string, password: string, remember = true): Promise<UserCredential> {
   await applyPersistence(remember);
   return signInWithEmailAndPassword(getFirebaseAuth(), email.trim(), password);
+}
+
+export async function requestPasswordReset(email: string): Promise<void> {
+  await sendPasswordResetEmail(getFirebaseAuth(), email.trim());
+}
+
+export async function sendVerification(user: User): Promise<void> {
+  await sendEmailVerification(user);
 }
 
 export async function logout(): Promise<void> {
