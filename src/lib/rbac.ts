@@ -1,8 +1,9 @@
 /**
  * Centralised Role-Based Access Control (RBAC) definitions for CERION.
  *
- * Everything permission-related lives here: adding a new role means adding one
- * entry to ROLE_PERMISSIONS — no permission checks are duplicated elsewhere.
+ * These helpers mirror backend policy for navigation and route UX only. They
+ * are not a security boundary; Firestore rules and trusted server operations
+ * must independently authorize every data operation.
  */
 
 export const ROLES = ["owner", "admin", "teacher", "viewer"] as const;
@@ -115,9 +116,10 @@ export function hasAnyPermission(role: Role | null, permissions: Permission[]): 
   return permissions.some((permission) => hasPermission(role, permission));
 }
 
-/** Route path -> permission required to open it. Routes absent here are open to any signed-in user. */
+/** Route path -> permission required to open it. Unmapped protected routes deny access. */
 export const ROUTE_PERMISSIONS: Record<string, Permission> = {
   "/dashboard": "view.dashboard",
+  "/profile": "view.dashboard",
   "/environment": "view.environment",
   "/energy": "view.energy",
   "/devices": "manage.devices",
@@ -133,7 +135,7 @@ export function canAccessRoute(role: Role | null, pathname: string): boolean {
   const match = Object.keys(ROUTE_PERMISSIONS).find(
     (route) => pathname === route || pathname.startsWith(`${route}/`),
   );
-  if (!match) return Boolean(role);
+  if (!match) return false;
   return hasPermission(role, ROUTE_PERMISSIONS[match] as Permission);
 }
 

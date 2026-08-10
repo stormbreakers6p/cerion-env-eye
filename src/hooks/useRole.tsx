@@ -4,17 +4,16 @@ import { isRole, type Permission, type Role, hasPermission as rbacHas } from "@/
 import { useAuth } from "@/hooks/useAuth";
 import { getUserProfile } from "@/lib/users";
 
-const ROLE_OVERRIDE_KEY = "cerion.role";
+const LEGACY_ROLE_OVERRIDE_KEY = "cerion.role";
 const SCHOOL_KEY = "cerion.selectedSchool";
 
-/** Default role used when the account has no `role` custom claim yet. */
-const DEFAULT_ROLE: Role = "owner";
-
 type RoleContextValue = {
+  /** Authoritative role resolved from a verified claim or Firestore profile. */
   role: Role | null;
   loading: boolean;
-  /** Prototype-only override so the interface can be reviewed as any role. */
-  setRoleOverride: (role: Role) => void;
+  /** Development-only visual preview. It never participates in access checks. */
+  previewRole: Role | null;
+  setPreviewRole: (role: Role) => void;
   can: (permission: Permission) => boolean;
   selectedSchool: string | null;
   setSelectedSchool: (school: string | null) => void;
@@ -23,7 +22,8 @@ type RoleContextValue = {
 const RoleContext = createContext<RoleContextValue>({
   role: null,
   loading: true,
-  setRoleOverride: () => {},
+  previewRole: null,
+  setPreviewRole: () => {},
   can: () => false,
   selectedSchool: null,
   setSelectedSchool: () => {},
@@ -32,13 +32,13 @@ const RoleContext = createContext<RoleContextValue>({
 export function RoleProvider({ children }: { children: ReactNode }) {
   const { user, loading: authLoading, signOut } = useAuth();
   const [claimRole, setClaimRole] = useState<Role | null>(null);
-  const [override, setOverride] = useState<Role | null>(null);
+  const [previewRole, setPreviewRoleState] = useState<Role | null>(null);
   const [selectedSchool, setSelectedSchoolState] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const storedRole = window.localStorage.getItem(ROLE_OVERRIDE_KEY);
-    if (isRole(storedRole)) setOverride(storedRole);
+    // Legacy prototype overrides must never survive into authorization decisions.
+    window.localStorage.removeItem(LEGACY_ROLE_OVERRIDE_KEY);
     setSelectedSchoolState(window.localStorage.getItem(SCHOOL_KEY));
   }, []);
 
@@ -82,9 +82,8 @@ export function RoleProvider({ children }: { children: ReactNode }) {
   }, [user, authLoading, signOut]);
 
 
-  const setRoleOverride = useCallback((next: Role) => {
-    setOverride(next);
-    window.localStorage.setItem(ROLE_OVERRIDE_KEY, next);
+  const setPreviewRole = useCallback((next: Role) => {
+    if (import.meta.env.DEV) setPreviewRoleState(next);
   }, []);
 
   const setSelectedSchool = useCallback((school: string | null) => {
@@ -93,18 +92,19 @@ export function RoleProvider({ children }: { children: ReactNode }) {
     else window.localStorage.removeItem(SCHOOL_KEY);
   }, []);
 
-  const role: Role | null = user ? (claimRole ?? override ?? DEFAULT_ROLE) : null;
+  const role: Role | null = user ? claimRole : null;
 
   const value = useMemo<RoleContextValue>(
     () => ({
       role,
       loading: authLoading || loading,
-      setRoleOverride,
+      previewRole,
+      setPreviewRole,
       can: (permission: Permission) => rbacHas(role, permission),
       selectedSchool,
       setSelectedSchool,
     }),
-    [role, authLoading, loading, setRoleOverride, selectedSchool, setSelectedSchool],
+    [role, authLoading, loading, previewRole, setPreviewRole, selectedSchool, setSelectedSchool],
   );
 
   return <RoleContext.Provider value={value}>{children}</RoleContext.Provider>;

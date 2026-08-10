@@ -87,6 +87,8 @@ export function UserManager({ roleFilter }: { roleFilter?: Role[] | undefined })
   useEffect(() => {
     setLoading(true);
     const unsubscribe = subscribeUsers(
+      actorRole,
+      selectedSchool,
       (rows) => {
         setUsers(rows);
         setLoadError(false);
@@ -98,7 +100,7 @@ export function UserManager({ roleFilter }: { roleFilter?: Role[] | undefined })
       },
     );
     return unsubscribe;
-  }, []);
+  }, [actorRole, selectedSchool]);
 
   const visible = useMemo(() => {
     return users.filter((entry) => {

@@ -1,0 +1,88 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedInAndVerified() {
+      return request.auth != null && request.auth.token.email_verified == true;
+    }
+
+    function actorProfile() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function actorRole() {
+      return actorProfile().role;
+    }
+
+    function actorSchool() {
+      return actorProfile().school;
+    }
+
+    function actorEnabled() {
+      return actorProfile().disabled == false;
+    }
+
+    function isOwner() {
+      return signedInAndVerified() && actorEnabled() && actorRole() == 'owner';
+    }
+
+    function isAdmin() {
+      return signedInAndVerified() && actorEnabled() && actorRole() == 'admin';
+    }
+
+    function isAssignableByAdmin(role) {
+      return role == 'teacher' || role == 'viewer';
+    }
+
+    function hasValidUserShape(data) {
+      return data.fullName is string
+        && data.email is string
+        && data.role in ['owner', 'admin', 'teacher', 'viewer']
+        && data.school is string
+        && data.classrooms is list
+        && data.disabled is bool;
+    }
+
+    function adminCanManage(data) {
+      return isAdmin()
+        && isAssignableByAdmin(data.role)
+        && data.school == actorSchool();
+    }
+
+    match /users/{userId} {
+      allow get: if signedInAndVerified()
+        && actorEnabled()
+        && (request.auth.uid == userId
+          || isOwner()
+          || (isAdmin() && resource.data.school == actorSchool()));
+
+      allow list: if isOwner()
+        || (isAdmin() && resource.data.school == actorSchool());
+
+      allow create: if hasValidUserShape(request.resource.data)
+        && (isOwner() || adminCanManage(request.resource.data));
+
+      allow update: if hasValidUserShape(request.resource.data)
+        && (
+          isOwner()
+          || (
+            adminCanManage(resource.data)
+            && adminCanManage(request.resource.data)
+            && request.resource.data.school == resource.data.school
+          )
+          || (
+            signedInAndVerified()
+            && actorEnabled()
+            && request.auth.uid == userId
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['fullName', 'updatedAt'])
+          )
+        );
+
+      allow delete: if isOwner() || adminCanManage(resource.data);
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

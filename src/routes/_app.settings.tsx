@@ -43,7 +43,7 @@ const THRESHOLDS = ["Temperature", "Humidity", "CO₂", "VOC", "AQI", "Power"];
 function SettingsPage() {
   const { theme, setTheme } = useTheme();
   const { t, locale, setLocale } = useI18n();
-  const { role, setRoleOverride } = useRole();
+  const { previewRole, setPreviewRole } = useRole();
 
   return (
     <>
@@ -91,20 +91,25 @@ function SettingsPage() {
           </div>
         </SectionCard>
 
-        <SectionCard title={t("role.preview")} icon={ShieldCheck} description={t("role.previewHint")}>
-          <div className="flex flex-wrap gap-2">
-            {ROLES.map((value) => (
-              <Button
-                key={value}
-                variant={role === value ? "default" : "outline"}
-                className="h-11 rounded-xl"
-                onClick={() => setRoleOverride(value)}
-              >
-                {t(`role.${value}`)}
-              </Button>
-            ))}
-          </div>
-        </SectionCard>
+        {import.meta.env.DEV && (
+          <SectionCard title={t("role.preview")} icon={ShieldCheck} description={t("role.previewHint")}>
+            <div className="flex flex-wrap gap-2">
+              {ROLES.map((value) => (
+                <Button
+                  key={value}
+                  variant={previewRole === value ? "default" : "outline"}
+                  className="h-11 rounded-xl"
+                  onClick={() => setPreviewRole(value)}
+                >
+                  {t(`role.${value}`)}
+                </Button>
+              ))}
+            </div>
+            <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+              Visual preview only. Your permissions and accessible routes remain unchanged.
+            </p>
+          </SectionCard>
+        )}
 
 
         <SectionCard title="Notifications" icon={Bell}>
