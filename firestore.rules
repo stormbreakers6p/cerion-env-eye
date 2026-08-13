@@ -2,83 +2,207 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    function signedInAndVerified() {
-      return request.auth != null && request.auth.token.email_verified == true;
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function profilePath() {
+      return /databases/$(database)/documents/users/$(request.auth.uid);
+    }
+
+    function actorProfileExists() {
+      return signedIn() && exists(profilePath());
     }
 
     function actorProfile() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
-    }
-
-    function actorRole() {
-      return actorProfile().role;
-    }
-
-    function actorSchool() {
-      return actorProfile().school;
+      return get(profilePath()).data;
     }
 
     function actorEnabled() {
-      return actorProfile().disabled == false;
+      return actorProfileExists()
+        && actorProfile().fullName is string
+        && actorProfile().email == request.auth.token.email
+        && actorProfile().role in ['owner', 'admin', 'teacher', 'viewer']
+        && actorProfile().school is string
+        && actorProfile().classrooms is list
+        && actorProfile().disabled == false
+        && actorProfile().status == 'active';
     }
 
     function isOwner() {
-      return signedInAndVerified() && actorEnabled() && actorRole() == 'owner';
+      return actorEnabled() && actorProfile().role == 'owner';
     }
 
     function isAdmin() {
-      return signedInAndVerified() && actorEnabled() && actorRole() == 'admin';
+      return actorEnabled() && actorProfile().role == 'admin';
     }
 
-    function isAssignableByAdmin(role) {
-      return role == 'teacher' || role == 'viewer';
+    function isTeacher() {
+      return actorEnabled() && actorProfile().role == 'teacher';
     }
 
-    function hasValidUserShape(data) {
+    function sameSchool(schoolId) {
+      return actorEnabled() && actorProfile().school == schoolId;
+    }
+
+    function canReadClassroom(schoolId, classroomId) {
+      return actorEnabled()
+        && (
+          isOwner()
+          || (
+            sameSchool(schoolId)
+            && (isAdmin() || actorProfile().classrooms.hasAny([classroomId]))
+          )
+        );
+    }
+
+    function canManageSchool(schoolId) {
+      return isOwner() || (isAdmin() && sameSchool(schoolId));
+    }
+
+    function classroomBelongsToSchool(classroomId, schoolId) {
+      return exists(/databases/$(database)/documents/classrooms/$(classroomId))
+        && get(/databases/$(database)/documents/classrooms/$(classroomId)).data.schoolId == schoolId
+        && get(/databases/$(database)/documents/classrooms/$(classroomId)).data.active == true;
+    }
+
+    function validUser(data) {
       return data.fullName is string
         && data.email is string
         && data.role in ['owner', 'admin', 'teacher', 'viewer']
         && data.school is string
         && data.classrooms is list
-        && data.disabled is bool;
-    }
-
-    function adminCanManage(data) {
-      return isAdmin()
-        && isAssignableByAdmin(data.role)
-        && data.school == actorSchool();
+        && data.disabled is bool
+        && data.status in ['active', 'disabled']
+        && ((data.status == 'active' && data.disabled == false)
+          || (data.status == 'disabled' && data.disabled == true));
     }
 
     match /users/{userId} {
-      allow get: if signedInAndVerified()
-        && actorEnabled()
-        && (request.auth.uid == userId
-          || isOwner()
-          || (isAdmin() && resource.data.school == actorSchool()));
+      allow get: if signedIn() && request.auth.uid == userId
+        || isOwner()
+        || (isAdmin() && resource.data.school == actorProfile().school);
 
       allow list: if isOwner()
-        || (isAdmin() && resource.data.school == actorSchool());
+        || (isAdmin() && resource.data.school == actorProfile().school);
 
-      allow create: if hasValidUserShape(request.resource.data)
-        && (isOwner() || adminCanManage(request.resource.data));
+      // Account creation/deletion is restricted to trusted Cloud Functions.
+      allow create: if false;
 
-      allow update: if hasValidUserShape(request.resource.data)
-        && (
-          isOwner()
-          || (
-            adminCanManage(resource.data)
-            && adminCanManage(request.resource.data)
-            && request.resource.data.school == resource.data.school
-          )
-          || (
-            signedInAndVerified()
-            && actorEnabled()
-            && request.auth.uid == userId
-            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['fullName', 'updatedAt'])
-          )
-        );
+      // Role, school, assignments and status are changed only by trusted Functions.
+      allow update: if validUser(request.resource.data)
+        && actorEnabled()
+        && request.auth.uid == userId
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['fullName', 'updatedAt']);
 
-      allow delete: if isOwner() || adminCanManage(resource.data);
+      allow delete: if false;
+    }
+
+    match /schools/{schoolId} {
+      allow read: if isOwner() || sameSchool(schoolId);
+      allow create, update: if isOwner();
+      allow delete: if false;
+    }
+
+    match /classrooms/{classroomId} {
+      allow read: if canReadClassroom(resource.data.schoolId, classroomId);
+      allow create: if canManageSchool(request.resource.data.schoolId);
+      allow update: if canManageSchool(resource.data.schoolId)
+        && request.resource.data.schoolId == resource.data.schoolId;
+      allow delete: if false;
+    }
+
+    match /devices/{deviceId} {
+      allow read: if canReadClassroom(resource.data.schoolId, resource.data.classroomId);
+      allow create: if canManageSchool(request.resource.data.schoolId)
+        && classroomBelongsToSchool(request.resource.data.classroomId, request.resource.data.schoolId);
+      allow update: if canManageSchool(resource.data.schoolId)
+        && request.resource.data.schoolId == resource.data.schoolId
+        && classroomBelongsToSchool(request.resource.data.classroomId, request.resource.data.schoolId)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'name', 'type', 'classroomId', 'firmwareVersion', 'installLocation', 'sensors',
+          'enabled', 'updatedAt'
+        ]);
+      allow delete: if false;
+    }
+
+    match /latestReadings/{deviceId} {
+      allow read: if canReadClassroom(resource.data.schoolId, resource.data.classroomId);
+      allow write: if false;
+    }
+
+    match /readings/{readingId} {
+      allow read: if canReadClassroom(resource.data.schoolId, resource.data.classroomId);
+      allow write: if false;
+    }
+
+    match /alerts/{alertId} {
+      allow read: if canReadClassroom(resource.data.schoolId, resource.data.classroomId);
+      allow create, delete: if false;
+      allow update: if canReadClassroom(resource.data.schoolId, resource.data.classroomId)
+        && (isOwner() || isAdmin() || isTeacher())
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'state', 'acknowledgedAt', 'acknowledgedBy', 'resolvedAt', 'resolvedBy',
+          'assignedTo', 'note'
+        ]);
+    }
+
+    match /settings/{schoolId} {
+      allow read: if isOwner() || sameSchool(schoolId);
+      allow create, update: if canManageSchool(schoolId)
+        && request.resource.data.schoolId == schoolId;
+      allow delete: if isOwner();
+    }
+
+    match /auditLogs/{auditId} {
+      allow create: if actorEnabled()
+        && request.resource.data.actorUid == request.auth.uid
+        && request.resource.data.action is string
+        && request.resource.data.detail is string
+        && request.resource.data.actor is string
+        && request.resource.data.schoolId is string;
+      allow read: if isOwner()
+        || (isAdmin() && resource.data.schoolId == actorProfile().school);
+      allow update, delete: if false;
+    }
+
+    match /classroomNotes/{noteId} {
+      allow read: if canReadClassroom(resource.data.schoolId, resource.data.classroomId);
+      allow create: if canReadClassroom(
+          request.resource.data.schoolId,
+          request.resource.data.classroomId
+        )
+        && request.resource.data.authorUid == request.auth.uid
+        && request.resource.data.text is string;
+      allow update, delete: if canReadClassroom(resource.data.schoolId, resource.data.classroomId)
+        && (resource.data.authorUid == request.auth.uid || isOwner() || isAdmin());
+    }
+
+    match /deviceIssues/{issueId} {
+      allow read: if canReadClassroom(resource.data.schoolId, resource.data.classroomId);
+      allow create: if canReadClassroom(
+          request.resource.data.schoolId,
+          request.resource.data.classroomId
+        )
+        && request.resource.data.reporterUid == request.auth.uid
+        && request.resource.data.state == 'open';
+      allow update: if canManageSchool(resource.data.schoolId)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'state', 'resolution', 'assignedTo', 'updatedAt'
+        ]);
+      allow delete: if isOwner();
+    }
+
+    match /deviceSecrets/{deviceId} {
+      allow read, write: if false;
+    }
+
+    match /activeAlerts/{alertId} {
+      allow read, write: if false;
+    }
+
+    match /mail/{messageId} {
+      allow read, write: if false;
     }
 
     match /{document=**} {
