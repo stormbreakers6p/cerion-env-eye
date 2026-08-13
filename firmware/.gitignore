@@ -1,0 +1,5 @@
+.pio/
+.pio-core/
+.pio-python312/
+.pio-venv/
+include/local_config.h
