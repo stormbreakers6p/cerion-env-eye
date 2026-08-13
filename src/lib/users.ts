@@ -36,6 +36,7 @@ export type UserProfile = {
   fullName: string;
   email: string;
   role: Role;
+  status: "active" | "inactive";
   school: string;
   classrooms: string[];
   disabled: boolean;
@@ -76,15 +77,15 @@ export function canManageUser(actorRole: Role | null, actorSchool: string | null
 }
 
 function toProfile(id: string, data: Record<string, unknown>): UserProfile {
-  const role = data["role"];
   return {
     uid: id,
     fullName: typeof data["fullName"] === "string" ? data["fullName"] : "",
     email: typeof data["email"] === "string" ? data["email"] : "",
-    role: (ROLES as readonly string[]).includes(role as string) ? (role as Role) : "viewer",
+    role: data["role"] as Role,
+    status: data["status"] === "active" ? "active" : "inactive",
     school: typeof data["school"] === "string" ? data["school"] : "",
     classrooms: Array.isArray(data["classrooms"]) ? (data["classrooms"] as string[]) : [],
-    disabled: data["disabled"] === true,
+    disabled: data["disabled"] !== false,
     createdBy: typeof data["createdBy"] === "string" ? data["createdBy"] : null,
     createdAt: readTime(data["createdAt"]),
     updatedAt: readTime(data["updatedAt"]),
