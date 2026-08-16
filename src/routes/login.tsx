@@ -19,10 +19,10 @@ export const Route = createFileRoute("/login")({
       { title: "Sign in — CERION Platform Access" },
       {
         name: "description",
-        content: "Secure sign-in for the CERION classroom environment and energy monitoring platform. Accounts are provisioned by your administrator.",
+        content: "Secure sign-in for the CERION classroom environmental monitoring platform. Accounts are provisioned by your administrator.",
       },
       { property: "og:title", content: "Sign in — CERION Platform Access" },
-      { property: "og:description", content: "Secure sign-in for the CERION classroom environment and energy monitoring platform." },
+      { property: "og:description", content: "Secure sign-in for the CERION classroom environmental monitoring platform." },
     ],
   }),
   component: LoginPage,
@@ -110,7 +110,7 @@ function LoginPage() {
             <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-primary">Secure access</p>
             <h1 className="mt-4 text-4xl font-bold leading-tight tracking-tight text-foreground">Welcome back to {BRAND.name}</h1>
             <p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground">
-              {BRAND.slogan} Sign in to monitor classroom environmental quality and electricity consumption from a single operations console.
+              {BRAND.slogan} Sign in to monitor classroom air quality, comfort and environmental conditions from a single operations console.
             </p>
             <ul className="mt-8 space-y-3 text-sm text-muted-foreground">
               {["Administrator-provisioned accounts only", "Verified email required", "Role-aware operations console"].map((item) => (

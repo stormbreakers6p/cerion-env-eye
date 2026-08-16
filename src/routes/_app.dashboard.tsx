@@ -33,10 +33,10 @@ export const Route = createFileRoute("/_app/dashboard")({
       { title: "Dashboard — CERION" },
       {
         name: "description",
-        content: "Executive overview of classroom environmental quality and energy consumption in CERION.",
+        content: "Executive overview of classroom environmental quality in CERION.",
       },
       { property: "og:title", content: "Dashboard — CERION" },
-      { property: "og:description", content: "Executive overview of classroom environment and energy in CERION." },
+      { property: "og:description", content: "Executive overview of classroom environmental conditions in CERION." },
     ],
   }),
   component: DashboardPage,
@@ -48,10 +48,8 @@ const METRICS = [
   { title: "CO₂", icon: Cloud, unit: "ppm" },
   { title: "VOC", icon: Sparkles, unit: "ppb" },
   { title: "AQI", icon: Gauge },
-  { title: "Voltage", icon: Plug, unit: "V" },
-  { title: "Current", icon: Activity, unit: "A" },
-  { title: "Power", icon: Zap, unit: "W" },
-  { title: "Energy Today", icon: Battery, unit: "kWh" },
+  { title: "Pressure", icon: Gauge, unit: "hPa" },
+  { title: "Gas Resistance", icon: Activity, unit: "kΩ" },
   { title: "Occupancy", icon: Users },
 ];
 
@@ -61,9 +59,10 @@ const CHARTS = [
   { title: "CO₂ Trend", icon: LineChart, variant: "line" as const },
   { title: "VOC Trend", icon: LineChart, variant: "line" as const },
   { title: "AQI Trend", icon: LineChart, variant: "line" as const },
-  { title: "Weekly Energy", icon: BarChart3, variant: "bars" as const },
-  { title: "Monthly Energy", icon: BarChart3, variant: "bars" as const },
-  { title: "Energy Distribution", icon: PieChart, variant: "donut" as const },
+  { title: "Pressure Trend", icon: LineChart, variant: "line" as const },
+  { title: "Gas Resistance Trend", icon: LineChart, variant: "line" as const },
+  { title: "Daily Air Quality Summary", icon: BarChart3, variant: "bars" as const },
+  { title: "Air Quality Distribution", icon: PieChart, variant: "donut" as const },
 ];
 
 function Clock() {
@@ -92,7 +91,7 @@ function DashboardPage() {
       <PageHeader
         eyebrow="Overview"
         title="Welcome to CERION"
-        description="Your classroom environmental and energy command centre. Live values appear once devices are integrated."
+        description="Your classroom environmental command centre. Live values appear once devices are integrated."
         actions={
           <>
             <ClassroomSelector />
@@ -108,7 +107,7 @@ function DashboardPage() {
             CERION is running in interface prototype mode.
           </p>
         </SectionCard>
-        <SectionCard title="Last connection" icon={Plug}>
+        <SectionCard title="Last connection" icon={Wifi}>
           <p className="text-2xl font-semibold text-muted-foreground/70">—</p>
           <p className="mt-2 text-sm text-muted-foreground">No device has connected yet.</p>
         </SectionCard>
