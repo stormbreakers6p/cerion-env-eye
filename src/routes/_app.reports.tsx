@@ -11,7 +11,7 @@ export const Route = createFileRoute("/_app/reports")({
       { title: "Reports — CERION" },
       { name: "description", content: "Daily, weekly, monthly and yearly reporting interface in CERION." },
       { property: "og:title", content: "Reports — CERION" },
-      { property: "og:description", content: "Environmental and energy reporting summaries for schools." },
+      { property: "og:description", content: "Environmental reporting summaries for schools." },
     ],
   }),
   component: ReportsPage,
@@ -21,12 +21,12 @@ const TABS = ["Daily", "Weekly", "Monthly", "Yearly"];
 
 const SUMMARY = [
   "Environmental Score",
-  "Energy Score",
+  "Air Quality Score",
   "Alert Statistics",
   "Top-performing Classroom",
-  "Highest Energy Usage",
-  "Estimated Savings",
-  "Carbon Footprint",
+  "Highest CO₂ Level",
+  "Ventilation Index",
+  "Comfort Index",
 ];
 
 function ReportsPage() {
@@ -35,7 +35,7 @@ function ReportsPage() {
       <PageHeader
         eyebrow="Reporting"
         title="Reports"
-        description="Periodic summaries of classroom environmental quality and electricity consumption."
+        description="Periodic summaries of classroom environmental quality."
         actions={
           <>
             {[
@@ -83,7 +83,7 @@ function ReportsPage() {
               <EmptyState
                 icon={BarChart3}
                 title="No report has been generated"
-                description="Reports will be produced automatically once environmental and energy data is connected."
+                description="Reports will be produced automatically once environmental data is connected."
               />
             </SectionCard>
 
