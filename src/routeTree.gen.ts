@@ -17,7 +17,6 @@ import { Route as AppAiInsightsRouteImport } from './routes/_app.ai-insights'
 import { Route as AppAlertsRouteImport } from './routes/_app.alerts'
 import { Route as AppDashboardRouteImport } from './routes/_app.dashboard'
 import { Route as AppDevicesRouteImport } from './routes/_app.devices'
-import { Route as AppEnergyRouteImport } from './routes/_app.energy'
 import { Route as AppEnvironmentRouteImport } from './routes/_app.environment'
 import { Route as AppHistoryRouteImport } from './routes/_app.history'
 import { Route as AppManagementRouteImport } from './routes/_app.management'
@@ -64,11 +63,6 @@ const AppDevicesRoute = AppDevicesRouteImport.update({
   path: '/devices',
   getParentRoute: () => AppRoute,
 } as any)
-const AppEnergyRoute = AppEnergyRouteImport.update({
-  id: '/energy',
-  path: '/energy',
-  getParentRoute: () => AppRoute,
-} as any)
 const AppEnvironmentRoute = AppEnvironmentRouteImport.update({
   id: '/environment',
   path: '/environment',
@@ -108,7 +102,6 @@ export interface FileRoutesByFullPath {
   '/alerts': typeof AppAlertsRoute
   '/dashboard': typeof AppDashboardRoute
   '/devices': typeof AppDevicesRoute
-  '/energy': typeof AppEnergyRoute
   '/environment': typeof AppEnvironmentRoute
   '/history': typeof AppHistoryRoute
   '/management': typeof AppManagementRoute
@@ -124,7 +117,6 @@ export interface FileRoutesByTo {
   '/alerts': typeof AppAlertsRoute
   '/dashboard': typeof AppDashboardRoute
   '/devices': typeof AppDevicesRoute
-  '/energy': typeof AppEnergyRoute
   '/environment': typeof AppEnvironmentRoute
   '/history': typeof AppHistoryRoute
   '/management': typeof AppManagementRoute
@@ -142,7 +134,6 @@ export interface FileRoutesById {
   '/_app/alerts': typeof AppAlertsRoute
   '/_app/dashboard': typeof AppDashboardRoute
   '/_app/devices': typeof AppDevicesRoute
-  '/_app/energy': typeof AppEnergyRoute
   '/_app/environment': typeof AppEnvironmentRoute
   '/_app/history': typeof AppHistoryRoute
   '/_app/management': typeof AppManagementRoute
@@ -160,7 +151,6 @@ export interface FileRouteTypes {
     | '/alerts'
     | '/dashboard'
     | '/devices'
-    | '/energy'
     | '/environment'
     | '/history'
     | '/management'
@@ -176,7 +166,6 @@ export interface FileRouteTypes {
     | '/alerts'
     | '/dashboard'
     | '/devices'
-    | '/energy'
     | '/environment'
     | '/history'
     | '/management'
@@ -193,7 +182,6 @@ export interface FileRouteTypes {
     | '/_app/alerts'
     | '/_app/dashboard'
     | '/_app/devices'
-    | '/_app/energy'
     | '/_app/environment'
     | '/_app/history'
     | '/_app/management'
@@ -267,13 +255,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDevicesRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/energy': {
-      id: '/_app/energy'
-      path: '/energy'
-      fullPath: '/energy'
-      preLoaderRoute: typeof AppEnergyRouteImport
-      parentRoute: typeof AppRoute
-    }
     '/_app/environment': {
       id: '/_app/environment'
       path: '/environment'
@@ -324,7 +305,6 @@ interface AppRouteChildren {
   AppAlertsRoute: typeof AppAlertsRoute
   AppDashboardRoute: typeof AppDashboardRoute
   AppDevicesRoute: typeof AppDevicesRoute
-  AppEnergyRoute: typeof AppEnergyRoute
   AppEnvironmentRoute: typeof AppEnvironmentRoute
   AppHistoryRoute: typeof AppHistoryRoute
   AppManagementRoute: typeof AppManagementRoute
@@ -338,7 +318,6 @@ const AppRouteChildren: AppRouteChildren = {
   AppAlertsRoute: AppAlertsRoute,
   AppDashboardRoute: AppDashboardRoute,
   AppDevicesRoute: AppDevicesRoute,
-  AppEnergyRoute: AppEnergyRoute,
   AppEnvironmentRoute: AppEnvironmentRoute,
   AppHistoryRoute: AppHistoryRoute,
   AppManagementRoute: AppManagementRoute,
