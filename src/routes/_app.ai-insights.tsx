@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Leaf, LineChart, Send, Sparkles, Zap } from "lucide-react";
+import { Gauge, Leaf, LineChart, Send, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DisabledAction, EmptyState, PageHeader, SectionCard, ShimmerBar } from "@/components/cerion/kit";
@@ -8,9 +8,9 @@ export const Route = createFileRoute("/_app/ai-insights")({
   head: () => ({
     meta: [
       { title: "AI Insights — CERION" },
-      { name: "description", content: "CERION AI assistant interface for environmental and energy recommendations." },
+      { name: "description", content: "CERION AI assistant interface for classroom environmental recommendations." },
       { property: "og:title", content: "AI Insights — CERION" },
-      { property: "og:description", content: "AI-powered recommendations for classroom environment and energy." },
+      { property: "og:description", content: "AI-powered recommendations for classroom environmental quality." },
     ],
   }),
   component: AiInsightsPage,
@@ -18,8 +18,8 @@ export const Route = createFileRoute("/_app/ai-insights")({
 
 const SUGGESTIONS = [
   "How is classroom air quality trending?",
-  "Where is electricity being used most?",
-  "What can reduce energy consumption?",
+  "Which classroom has the highest CO₂ levels?",
+  "How can we improve thermal comfort?",
   "Which room needs better ventilation?",
 ];
 
@@ -40,7 +40,7 @@ function AiInsightsPage() {
           <div>
             <h2 className="text-xl font-semibold">CERION Assistant</h2>
             <p className="mx-auto mt-2 max-w-lg text-sm leading-relaxed text-muted-foreground">
-              AI insights will appear after CERION is connected to environmental and energy data.
+              AI insights will appear after CERION is connected to environmental sensor data.
             </p>
           </div>
           <div className="w-full max-w-md space-y-2">
@@ -55,8 +55,8 @@ function AiInsightsPage() {
         <SectionCard title="Environmental recommendations" icon={Leaf}>
           <EmptyState icon={Leaf} title="No insights yet" description="Environmental guidance appears after sensor integration." compact />
         </SectionCard>
-        <SectionCard title="Energy recommendations" icon={Zap}>
-          <EmptyState icon={Zap} title="No insights yet" description="Energy guidance appears after electrical data integration." compact />
+        <SectionCard title="Air quality recommendations" icon={Gauge}>
+          <EmptyState icon={Gauge} title="No insights yet" description="Air quality guidance appears after sensor integration." compact />
         </SectionCard>
         <SectionCard title="Predicted trends" icon={LineChart}>
           <EmptyState icon={LineChart} title="No predictions yet" description="Forecasts require historical data records." compact />

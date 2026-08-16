@@ -16,9 +16,9 @@ export const Route = createFileRoute("/_app/history")({
   head: () => ({
     meta: [
       { title: "History — CERION" },
-      { name: "description", content: "Historical classroom environmental and energy records in CERION." },
+      { name: "description", content: "Historical classroom environmental records in CERION." },
       { property: "og:title", content: "History — CERION" },
-      { property: "og:description", content: "Browse recorded classroom environmental and energy readings." },
+      { property: "og:description", content: "Browse recorded classroom environmental readings." },
     ],
   }),
   component: HistoryPage,
@@ -33,8 +33,7 @@ const COLUMNS = [
   "CO₂",
   "VOC",
   "AQI",
-  "Power",
-  "Energy",
+  "Pressure",
   "Occupancy",
   "Status",
 ];
@@ -45,7 +44,7 @@ function HistoryPage() {
       <PageHeader
         eyebrow="Records"
         title="Historical data"
-        description="Recorded environmental and electrical readings for review and comparison."
+        description="Recorded environmental readings for review and comparison."
         actions={
           <DisabledAction>
             <Button variant="outline" className="h-11 rounded-xl" disabled>
@@ -62,7 +61,7 @@ function HistoryPage() {
         <SelectShell
           placeholder="All sensor types"
           ariaLabel="Filter by sensor type"
-          options={["Temperature", "Humidity", "CO₂", "VOC", "AQI", "Energy"]}
+          options={["Temperature", "Humidity", "CO₂", "VOC", "AQI", "Pressure"]}
         />
       </FilterBar>
 

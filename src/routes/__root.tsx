@@ -85,7 +85,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "CERION is an AI-powered IoT platform concept for monitoring classroom environmental quality and electricity consumption.",
+          "CERION is an AI-powered IoT platform concept for monitoring classroom environmental quality.",
       },
       { name: "author", content: "CERION" },
       { property: "og:type", content: "website" },

@@ -18,7 +18,7 @@ export const Route = createFileRoute("/_app/alerts")({
   head: () => ({
     meta: [
       { title: "Alerts — CERION" },
-      { name: "description", content: "Alert centre interface for classroom environmental and energy thresholds." },
+      { name: "description", content: "Alert centre interface for classroom environmental thresholds." },
       { property: "og:title", content: "Alerts — CERION" },
       { property: "og:description", content: "Critical, warning and normal alert monitoring for schools." },
     ],
@@ -45,7 +45,7 @@ function AlertsPage() {
       <PageHeader
         eyebrow="Monitoring"
         title="Alerts"
-        description="Threshold events across environmental and electrical monitoring."
+        description="Threshold events across classroom environmental monitoring."
         actions={
           <>
             <DisabledAction>

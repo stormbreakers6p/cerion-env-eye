@@ -13,7 +13,6 @@ export const PERMISSIONS = [
   // Read surfaces
   "view.dashboard",
   "view.environment",
-  "view.energy",
   "view.alerts",
   "view.history",
   "view.reports",
@@ -50,7 +49,6 @@ const OWNER_PERMISSIONS: Permission[] = [...PERMISSIONS];
 const ADMIN_PERMISSIONS: Permission[] = [
   "view.dashboard",
   "view.environment",
-  "view.energy",
   "view.alerts",
   "view.history",
   "view.reports",
@@ -72,7 +70,6 @@ const ADMIN_PERMISSIONS: Permission[] = [
 const TEACHER_PERMISSIONS: Permission[] = [
   "view.dashboard",
   "view.environment",
-  "view.energy",
   "view.alerts",
   "view.history",
   "view.reports",
@@ -87,7 +84,6 @@ const TEACHER_PERMISSIONS: Permission[] = [
 const VIEWER_PERMISSIONS: Permission[] = [
   "view.dashboard",
   "view.environment",
-  "view.energy",
   "view.alerts",
   "view.history",
 ];
@@ -121,7 +117,6 @@ export const ROUTE_PERMISSIONS: Record<string, Permission> = {
   "/dashboard": "view.dashboard",
   "/profile": "view.dashboard",
   "/environment": "view.environment",
-  "/energy": "view.energy",
   "/devices": "manage.devices",
   "/alerts": "view.alerts",
   "/history": "view.history",

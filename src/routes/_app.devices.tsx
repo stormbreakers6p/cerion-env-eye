@@ -90,7 +90,7 @@ function DevicesPage() {
         <SelectShell
           placeholder="All device types"
           ariaLabel="Filter by device type"
-          options={["Sensor node", "Gateway", "Energy meter"]}
+          options={["Sensor node", "Gateway", "Air quality node"]}
         />
       </FilterBar>
 

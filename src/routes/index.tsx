@@ -35,7 +35,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "CERION is a premium AI-powered IoT platform concept for monitoring classroom air quality, comfort and electricity consumption in schools.",
+          "CERION is a premium AI-powered IoT platform concept for monitoring classroom air quality, comfort and environmental health in schools.",
       },
       { property: "og:title", content: "CERION — Smarter Classrooms, Greener Future" },
       {
@@ -62,8 +62,8 @@ const FEATURES = [
   { icon: Cloud, title: "CO₂ Monitoring", body: "Surface ventilation quality so classrooms stay alert, fresh and focused." },
   { icon: Sparkles, title: "VOC Monitoring", body: "Watch volatile organic compounds from cleaning products, furniture and materials." },
   { icon: Gauge, title: "AQI Monitoring", body: "A single air-quality index summarising the overall condition of each room." },
-  { icon: Zap, title: "Energy Monitoring", body: "Follow voltage, current, power and consumption per classroom and per period." },
-  { icon: Lightbulb, title: "AI Insights", body: "Contextual recommendations for ventilation, comfort and energy reduction." },
+  { icon: Wind, title: "Pressure & Gas Monitoring", body: "Barometric pressure and gas-resistance readings from the BME688 sensor in each room." },
+  { icon: Lightbulb, title: "AI Insights", body: "Contextual recommendations for ventilation, comfort and air quality." },
   { icon: Bell, title: "Automatic Alerts", body: "Threshold-based notifications for critical and warning conditions." },
   { icon: History, title: "Historical Data", body: "Long-term records for comparison, auditing and school reporting." },
   { icon: BarChart3, title: "Reports", body: "Daily, weekly, monthly and yearly summaries prepared for school leadership." },
@@ -71,7 +71,7 @@ const FEATURES = [
 ];
 
 const FLOW = [
-  { icon: Thermometer, title: "Sensors", body: "Environmental and electrical sensing hardware in the classroom." },
+  { icon: Thermometer, title: "Sensors", body: "BME688 and MH-Z19E environmental sensing hardware in the classroom." },
   { icon: Cpu, title: "ESP32", body: "Edge controller collecting and transmitting sensor signals." },
   { icon: Cloud, title: "Cloud", body: "Secure ingestion and storage layer for time-series records." },
   { icon: LayoutDashboard, title: "CERION Dashboard", body: "The interface layer delivered in Version 1." },
@@ -82,7 +82,7 @@ const FLOW = [
 const BENEFITS = [
   { icon: ShieldCheck, title: "Healthier classrooms", body: "Conditions that support wellbeing and concentration." },
   { icon: Wind, title: "Cleaner air", body: "Ventilation guidance grounded in measured air quality." },
-  { icon: Zap, title: "Lower electricity consumption", body: "Visibility into where and when energy is used." },
+  { icon: Cloud, title: "Better ventilation", body: "CO₂ visibility showing when a room needs fresh air." },
   { icon: Activity, title: "Real-time visibility", body: "A live operational picture for facility teams." },
   { icon: Sparkles, title: "Predictive insights", body: "Early signals before conditions become problems." },
   { icon: ShieldCheck, title: "Safer learning environment", body: "Rapid awareness of unsafe environmental conditions." },
@@ -116,8 +116,8 @@ function HeroIllustration() {
         </div>
         <div className="mt-3 grid grid-cols-2 gap-3">
           <div className="rounded-xl border border-border bg-muted/30 p-3">
-            <Zap className="h-4 w-4 text-primary" />
-            <p className="mt-1 text-xs text-muted-foreground">Energy</p>
+            <Cloud className="h-4 w-4 text-primary" />
+            <p className="mt-1 text-xs text-muted-foreground">CO₂</p>
             <p className="text-xl font-semibold text-muted-foreground/70">—</p>
           </div>
           <div className="rounded-xl border border-border bg-muted/30 p-3">
@@ -199,7 +199,7 @@ function Landing() {
                 </h1>
                 <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
                   CERION is an AI-powered IoT platform concept that helps schools understand classroom
-                  air quality, comfort and electricity consumption — so learning spaces become
+                  air quality, comfort and environmental conditions — so learning spaces become
                   healthier, safer and more sustainable.
                 </p>
                 <div className="mt-8 flex flex-wrap gap-3">
@@ -225,13 +225,13 @@ function Landing() {
             <div className="mx-auto max-w-[1240px] px-4 py-16 sm:px-6 lg:py-24">
               <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-primary">About</p>
               <h2 className="mt-3 max-w-3xl text-3xl font-semibold tracking-tight sm:text-4xl">
-                A single platform for classroom environment and energy awareness
+                A single platform for classroom environmental awareness
               </h2>
               <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
                 {[
                   {
                     title: "What CERION is",
-                    body: "A premium AI-powered IoT platform concept designed for schools, combining environmental sensing, electricity monitoring and intelligent analysis in one interface.",
+                    body: "A premium AI-powered IoT platform concept designed for schools, combining environmental sensing and intelligent analysis in one interface.",
                   },
                   {
                     title: "Purpose of the platform",
@@ -242,8 +242,8 @@ function Landing() {
                     body: "Temperature, humidity, CO₂ and air quality directly affect concentration, health and comfort. Without measurement these conditions stay invisible.",
                   },
                   {
-                    title: "Why energy matters",
-                    body: "Electricity is one of the largest operational costs for a school. Visibility is the first step toward reduction and sustainability.",
+                    title: "Why measurement matters",
+                    body: "Conditions that are measured can be improved. Continuous data is the first step toward healthier, more sustainable classrooms.",
                   },
                 ].map((item) => (
                   <div key={item.title} className="surface-card hover-lift p-6">
@@ -338,7 +338,7 @@ function Landing() {
                 Explore the CERION interface
               </h2>
               <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed opacity-80 sm:text-base">
-                Step inside the dashboard experience that will power classroom environmental and energy
+                Step inside the dashboard experience that will deliver classroom environmental
                 intelligence once hardware integration is complete.
               </p>
               <Button asChild size="lg" className="mt-8 h-13 rounded-xl px-8 text-base">
@@ -356,8 +356,8 @@ function Landing() {
               <div className="min-w-0">
                 <CerionWordmark subtitle="Smarter Classrooms, Greener Future." />
                 <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground">
-                  A premium AI-powered IoT platform concept for school environmental quality and
-                  electricity monitoring.
+                  A premium AI-powered IoT platform concept for school environmental quality
+                  monitoring.
                 </p>
                 <div className="mt-4">
                   <StatusBadge label="Version 1.0 — Interface Prototype" />

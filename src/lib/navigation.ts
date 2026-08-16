@@ -10,7 +10,6 @@ import {
   ShieldCheck,
   Sparkles,
   User,
-  Zap,
 } from "lucide-react";
 import type { Permission } from "@/lib/rbac";
 
@@ -26,7 +25,6 @@ export type NavItem = {
 export const APP_NAV: NavItem[] = [
   { labelKey: "nav.dashboard", to: "/dashboard", icon: LayoutDashboard, descriptionKey: "nav.desc.dashboard", permission: "view.dashboard" },
   { labelKey: "nav.environment", to: "/environment", icon: Gauge, descriptionKey: "nav.desc.environment", permission: "view.environment" },
-  { labelKey: "nav.energy", to: "/energy", icon: Zap, descriptionKey: "nav.desc.energy", permission: "view.energy" },
   { labelKey: "nav.devices", to: "/devices", icon: Cpu, descriptionKey: "nav.desc.devices", permission: "manage.devices" },
   { labelKey: "nav.alerts", to: "/alerts", icon: Bell, descriptionKey: "nav.desc.alerts", permission: "view.alerts" },
   { labelKey: "nav.history", to: "/history", icon: History, descriptionKey: "nav.desc.history", permission: "view.history" },

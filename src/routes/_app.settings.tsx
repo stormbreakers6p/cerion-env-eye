@@ -38,7 +38,7 @@ const THEMES: { value: ThemeMode; label: string }[] = [
 
 const NOTIFICATIONS = ["Critical alerts", "Warning alerts", "Device offline", "Daily summary", "Weekly report"];
 const SCHOOL_FIELDS = ["School name", "Address", "Contact", "Administrator"];
-const THRESHOLDS = ["Temperature", "Humidity", "CO₂", "VOC", "AQI", "Power"];
+const THRESHOLDS = ["Temperature", "Humidity", "CO₂", "VOC", "AQI", "Pressure"];
 
 function SettingsPage() {
   const { theme, setTheme } = useTheme();
@@ -183,7 +183,7 @@ function SettingsPage() {
       <SectionCard title="About CERION" icon={Info}>
         <p className="text-sm leading-relaxed text-muted-foreground">
           CERION is a premium AI-powered IoT platform concept designed to help schools monitor classroom
-          environments and energy consumption. Version 1 demonstrates the future visual interface before
+          environmental quality. Version 1 demonstrates the future visual interface before
           hardware and data systems are connected.
         </p>
         <Separator className="my-4" />
