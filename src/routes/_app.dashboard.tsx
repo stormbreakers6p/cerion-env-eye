@@ -13,9 +13,7 @@ import {
   Sparkles,
   Thermometer,
   Users,
-  Zap,
-  Plug,
-  Battery,
+  Wifi,
 } from "lucide-react";
 import {
   ChartCard,
