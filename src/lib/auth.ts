@@ -105,7 +105,17 @@ export function firebaseErrorMessage(error: unknown): string {
     case "auth/network-request-failed":
       return "Network error. Check your connection and try again.";
     case "auth/operation-not-allowed":
-      return "Email/password sign-in is not enabled for this project.";
+      return "This sign-in method is not enabled for this project. Ask your administrator to enable it in the Firebase console.";
+    case "auth/popup-closed-by-user":
+    case "auth/cancelled-popup-request":
+    case "auth/user-cancelled":
+      return "Google sign-in was cancelled.";
+    case "auth/popup-blocked":
+      return "Your browser blocked the Google sign-in popup. Allow popups and try again.";
+    case "auth/unauthorized-domain":
+      return "This domain is not authorised for Google sign-in. Ask your administrator to add it in the Firebase console.";
+    case "auth/account-exists-with-different-credential":
+      return "An account with this email already exists. Sign in with your email and password instead.";
     case "auth/invalid-credential":
     case "auth/wrong-password":
     case "auth/user-not-found":
